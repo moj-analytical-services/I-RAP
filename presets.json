@@ -1,0 +1,28 @@
+{
+  "isp_pop": {
+    "varlist": ["isp_status", "tariff_past", "ExtractDate", "tariff", "Gender", "OVERTARIFF_YEARS"],
+    "format": ["SAS"],
+    "path": {
+      "arguments": {
+        "quarter": {
+          "name": ["quarter"],
+          "description" : ["Year and quarter in the format '2018q4'"]
+        }
+      },
+      "statement": ["stringr::str_interp('alpha-dag-omsq/population/isp${quarter}.sas7bdat')"]
+    }
+  },
+  "ao_pop": {
+    "varlist": ["Sex", "custype", "AGE", "Offence_group", "EXTRDATE", "ETHNIC_GROUP_SHORT", "RELIGION_SHORT", "natgroup", "ESTAB", "NATIONALITY_SHORT", "NATIONALITY_LONG", "IRCflag", "IMPRISONMENT_STATUS_SHORT"],
+    "format": ["SAS"],
+    "path": {
+      "arguments": {
+        "date":{
+          "name": ["date"],
+          "description": ["Date in the format 'yyyymmdd'"]
+        }
+      },
+      "statement": ["stringr::str_interp('alpha-dag-omsq/population/ao${fileid}.sas7bdat')"]
+    }
+  }
+}
