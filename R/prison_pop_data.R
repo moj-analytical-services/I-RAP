@@ -1,3 +1,12 @@
+#' Build a prison population data file from raw SAS files
+#'
+#' This function builds a prison population data file. 
+#' It can combine multiple files based on population extracts taken on different dates.
+#'
+#' @param dates date of the population file(s) you wish to build a complete file from. Should be a character vector of dates in the format "yyyymmdd" 
+#' @return A data frame of the prison population for each date selected
+#' @export
+
 prison_pop_data <- function(dates) {
   
 ## Read datasets from SAS files
@@ -123,7 +132,7 @@ prison_pop_data <- function(dates) {
   # Create age groups
     
   finaldata <- finaldata %>% 
-                mutate(
+                dplyr::mutate(
                   age_group = dplyr::case_when(
                     age >= 15 & age <= 17 ~ "15-17",
                     age >= 18 & age <= 20 ~ "18-20",
@@ -139,7 +148,7 @@ prison_pop_data <- function(dates) {
   # Create another age grouping variable
   
   finaldata <- finaldata %>% 
-    mutate(
+    dplyr::mutate(
       age_group_adult = dplyr::case_when(
         age >= 15 & age <= 17 ~ "15-17",
         age >= 18 & age <= 20 ~ "18-20",
@@ -153,7 +162,7 @@ prison_pop_data <- function(dates) {
   finaldata <- finaldata %>%
     dplyr::group_by_at(c(names(finaldata)[!names(finaldata) %in% c(join_vars,"age")],
                   "age_group", "age_group_adult")) %>%
-    dplyr::summarise(prisoners = n())
+    dplyr::summarise(prisoners = dplyr::n())
   
   )
       

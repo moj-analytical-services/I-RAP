@@ -1,3 +1,14 @@
+#' Build a prison population table
+#'
+#' This function take a prison population data file and can be used to build publication table files.
+#' It will provide a breakdown of the data by specified varaibles, including creating 'Total' rows.
+#'
+#' @param tabledata A prison population data file
+#' @param filtervars A character vector of variables you wish to include in the table
+#' @param nestedvars A list of vectors of 'nested' variables you wish to include in the table. Nested variables are a set of variables which nest within one another rather than existing independently.
+#' @return A data table showing the final table data
+#' @export
+
 prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
   
   # Define variables that will be constant for every row of table
@@ -42,8 +53,8 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
   
   # Add factors to population data frame (needed in grouping step next)
   
-  tabledata <- unite(tabledata,!!geovar_all,all_of(geovars),sep="!")
-  tabledata <- unite(tabledata,!!timevar_all,all_of(timevars),sep="!")
+  tabledata <- tidyr::unite(tabledata,!!geovar_all,all_of(geovars),sep="!")
+  tabledata <- tidyr::unite(tabledata,!!timevar_all,all_of(timevars),sep="!")
   
   tabledata <- as.data.frame(unclass(tabledata), stringsAsFactors=TRUE)
   
@@ -58,12 +69,12 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
   suppressMessages(
   
   table <- lapply(full_list,FUN=tabulate) %>%
-    bind_rows() 
+    dplyr::bind_rows() 
 
   )
   
-  table <- separate(table,timevar_all,timevars,sep = "!")
-  table <- separate(table,geovar_all,geovars,sep = "!")
+  table <- tidyr::separate(table,timevar_all,timevars,sep = "!")
+  table <- tidyr::separate(table,geovar_all,geovars,sep = "!")
   
   # Remove factors created at earlier step
   
@@ -77,11 +88,11 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
       
       if (i==0) {nestlist <- table}
       
-      nestlist <- filter(nestlist,!is.na(!!as.name(x[length(x)-(i+1)])) | is.na(!!as.name(x[length(x)-i])), prisoners > 0)
+      nestlist <- dplyr::filter(nestlist,!is.na(!!as.name(x[length(x)-(i+1)])) | is.na(!!as.name(x[length(x)-i])), prisoners > 0)
       
     }
     
-    nestlist <- unique(select(nestlist,contains(x)))
+    nestlist <- unique(dplyr::select(nestlist,contains(x)))
     
     return(nestlist)
     
@@ -97,7 +108,7 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
       
       suppressMessages(
       
-          table <-inner_join(table,valid_list[[i]])
+          table <- dplyr::inner_join(table,valid_list[[i]])
           
       )
     
@@ -147,7 +158,7 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
   
   table$prisoners <- as.numeric(table$prisoners)
   
-  table <- select(table,-prisoners,prisoners)
+  table <- dplyr::select(table,-prisoners,prisoners)
   
   return(table)
   
