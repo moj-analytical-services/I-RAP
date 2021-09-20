@@ -15,5 +15,7 @@ Imports:
         haven,
         purrr,
         gtools,
-        tidyr
+        tidyr,
+        magrittr,
+        jsonlite
 RoxygenNote: 7.1.2

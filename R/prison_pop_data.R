@@ -71,54 +71,16 @@ prison_pop_data <- function(dates) {
 
   ## Add additional variable recodes from lookup tables
   
-  # Define paths to lookup tables in S3
+  # Define join varaibles for each lookup and list of lookups
   
-  lookup_paths <- paste0("alpha-harmonisation/lookups/",c("sex",
-                                                          "custody",
-                                                          "ethnicity",
-                                                          "nationality",
-                                                          "prison"),".csv")
-  
-  # Define join varaibles for each lookup
+  lookups <- c("sex","custody","ethnicity","nationality","prison")
   
   join_vars <- c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code")
 
+  # Match lookup variables to main dataset
   
-  # Loop through each lookup table matching it to the core data file
-
-  for (i in 1:length(lookup_paths)) {
-    
-    # Import lookup file
-
-    suppressMessages(
-      
-      lookup <- paws_read_using(FUN = readr::read_csv,
-                          path = lookup_paths[i])
-    )
-    
-    # Convert lookup table columns to character
-    
-    lookup <- data.frame(lapply(lookup, as.character), stringsAsFactors=FALSE)
-    
-    # Ensure blank cells in original lookup are blank in R data frame
-    # This is needed for some 'Not recorded' codes, otherwise R reads them as NA
-    
-    lookup[is.na(lookup)] <- ""
-    
-    # Left join the prison population data to each lookup to add new variables
-
-      if (i == 1) {
-        
-        finaldata <- dplyr::left_join(all_population_data,lookup,by=join_vars[i])
-        
-      } else {
-        
-        finaldata <- dplyr::left_join(finaldata,lookup,by=join_vars[i])
-        
-      }
-
-  }
-
+  finaldata <- join_lookups(all_population_data,lookups,join_vars)
+  
   ## Simple variables to be added or recoded
   
   finaldata$offence_group <- stringr::str_sub(finaldata$offence_group,4)

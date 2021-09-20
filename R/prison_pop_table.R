@@ -163,9 +163,3 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
   return(table)
   
 }
-
-
-
-
-
-
