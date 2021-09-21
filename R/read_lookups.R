@@ -5,7 +5,8 @@ read_lookups <- function() {
   lookups <- lapply(lookups,FUN=function(x){x[is.na(x)] <- ""
                                               return(x)})
   
+  lookups$agespecs <- jsonlite::fromJSON("https://raw.github.com/moj-analytical-services/harmonisation-reference/main/reference_files/agespecs.json")
+  
   return(lookups)
 }
-  
   

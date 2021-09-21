@@ -7,7 +7,7 @@
 #' @return A data frame of the prison population for each date selected
 #' @export
 
-prison_pop_data <- function(dates) {
+prison_pop_data <- function(dates,agespecs) {
   
 ## Read datasets from SAS files
   
@@ -67,15 +67,16 @@ prison_pop_data <- function(dates) {
                                                       custody_code = custype,
                                                       ethnicity_code = ethnic_group_short,
                                                       nationality_code = nationality_short,
-                                                      prison_code = estab))
+                                                      prison_code = estab,
+                                                      offence_code = offence_group))
 
   ## Add additional variable recodes from lookup tables
   
-  # Define join varaibles for each lookup and list of lookups
+  # Define join variables for each lookup and list of lookups
   
-  lookups <- c("sex","custody","ethnicity","nationality","prison")
+  lookups <- c("sex","custody","ethnicity","nationality","prison","offence")
   
-  join_vars <- c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code")
+  join_vars <- c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code","offence_code")
 
   # Match lookup variables to main dataset
   
@@ -83,39 +84,21 @@ prison_pop_data <- function(dates) {
   
   ## Simple variables to be added or recoded
   
-  finaldata$offence_group <- stringr::str_sub(finaldata$offence_group,4)
-  
   finaldata$geographic_level <- "National"
   finaldata$country_code <- "K04000001"
   finaldata$country_name <- "England and Wales"
   
-  finaldata$age <- as.numeric(finaldata$age)
-  
   # Create age groups
+  
+  finaldata$age <- as.numeric(finaldata$age)
     
-  finaldata <- finaldata %>% 
-                dplyr::mutate(
-                  age_group = dplyr::case_when(
-                    age >= 15 & age <= 17 ~ "15-17",
-                    age >= 18 & age <= 20 ~ "18-20",
-                    age >= 21 & age <= 24 ~ "21-24",
-                    age >= 25 & age <= 29 ~ "25-29",
-                    age >= 30 & age <= 39 ~ "30-39",
-                    age >= 40 & age <= 49 ~ "40-49",
-                    age >= 50 & age <= 59 ~ "50-59",
-                    age >= 60 & age <= 69 ~ "60-69",
-                    age >= 70  ~ "70 and over"
-                  ))
-  
-  # Create another age grouping variable
-  
-  finaldata <- finaldata %>% 
-    dplyr::mutate(
-      age_group_adult = dplyr::case_when(
-        age >= 15 & age <= 17 ~ "15-17",
-        age >= 18 & age <= 20 ~ "18-20",
-        age >= 21 ~ "Adult"
-      ))
+  for (i in 1:length(agespecs)) {
+    
+    finaldata[[names(agespecs[i])]] <- cut(finaldata$age,breaks=c(agespecs[[i]]$start_age,999),
+                                        labels=agespecs[[i]]$label,
+                                        right=FALSE)
+    
+  }
   
   # Aggregate data by all retained variables to compress data frame
   
