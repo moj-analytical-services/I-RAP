@@ -7,7 +7,7 @@
 #' @return A data frame of the prison population for each date selected
 #' @export
 
-prison_pop_data <- function(dates,agespecs) {
+prison_pop_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,indicator) {
   
 ## Read datasets from SAS files
   
@@ -41,48 +41,23 @@ prison_pop_data <- function(dates,agespecs) {
 
   }
   
-  ## Simple formatting changes
-  
   # Convert variable names to lower case
 
   names(all_population_data) <- tolower(names(all_population_data))
   
   # Select limited range of variables for tables
 
-  all_population_data <- dplyr::select(all_population_data,
-                                c(time_period,
-                                  time_identifier,
-                                  sex,
-                                  custype,
-                                  age,
-                                  offence_group,
-                                  ethnic_group_short,
-                                  nationality_short,
-                                  estab,
-                                  offence_group))
+  all_population_data <- dplyr::select_at(all_population_data,keepvars)
   
   # Rename original variables
-
-  all_population_data <- dplyr::rename(all_population_data,c(sex_code = sex,
-                                                      custody_code = custype,
-                                                      ethnicity_code = ethnic_group_short,
-                                                      nationality_code = nationality_short,
-                                                      prison_code = estab,
-                                                      offence_code = offence_group))
-
-  ## Add additional variable recodes from lookup tables
   
-  # Define join variables for each lookup and list of lookups
-  
-  lookups <- c("sex","custody","ethnicity","nationality","prison","offence")
-  
-  join_vars <- c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code","offence_code")
+  all_population_data <- all_population_data %>% dplyr::rename_at(vars(renames$old_name), ~ renames$new_name)
 
   # Match lookup variables to main dataset
   
   finaldata <- join_lookups(all_population_data,lookups,join_vars)
   
-  ## Simple variables to be added or recoded
+  ## Add geographical variables
   
   finaldata$geographic_level <- "National"
   finaldata$country_code <- "K04000001"
@@ -101,15 +76,16 @@ prison_pop_data <- function(dates,agespecs) {
   }
   
   # Aggregate data by all retained variables to compress data frame
-  
+
   suppressMessages(
                 
   finaldata <- finaldata %>%
-    dplyr::group_by_at(c(names(finaldata)[!names(finaldata) %in% c(join_vars,"age")],
-                  "age_group", "age_group_adult")) %>%
-    dplyr::summarise(prisoners = dplyr::n())
+    dplyr::group_by_at(c(names(finaldata)[!names(finaldata) %in% c(join_vars,"age")])) %>%
+    dplyr::summarise(countvar = dplyr::n())
   
   )
+  
+ finaldata <- finaldata %>% dplyr::rename_at("countvar", ~ indicator)
       
   return(finaldata)
 
