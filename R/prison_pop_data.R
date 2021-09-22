@@ -7,18 +7,19 @@
 #' @return A data frame of the prison population for each date selected
 #' @export
 
-prison_pop_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,indicator) {
+prison_pop_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,indicator,datasource) {
   
-## Read datasets from SAS files
+  ## Read datasets from SAS files
   
   for (i in 1:length(dates)) {
-
-    s3path <- stringr::str_interp("alpha-dag-omsq/population/ao${dates[i]}.sas7bdat")
-
-    population_data <- paws_read_using(FUN = haven::read_sas,
-                                path = s3path)
     
-    # Convert all columns to character
+    if (datasource == "prison_pop") {
+      
+      population_data <- prison_pop_data_spec(dates[i])
+      
+    }
+
+     # Convert all columns to character
 
     population_data <- data.frame(lapply(population_data, as.character), stringsAsFactors=FALSE)
     
