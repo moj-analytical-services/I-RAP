@@ -1,4 +1,4 @@
-prison_pop_data_spec <- function(date) {
+prison_pop_datasource <- function(date) {
   
   s3path <- stringr::str_interp("alpha-dag-omsq/population/ao${date}.sas7bdat")
   

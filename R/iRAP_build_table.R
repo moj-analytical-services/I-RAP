@@ -1,15 +1,16 @@
-#' Build a prison population table
+#' Build an iRAP Table
 #'
-#' This function take a prison population data file and can be used to build publication table files.
+#' This function take an iRAP data file, produced via the I-RAP::iRAP_build_data() function and produces an iRAP table.
 #' It will provide a breakdown of the data by specified varaibles, including creating 'Total' rows.
 #'
-#' @param tabledata A prison population data file
+#' @param tabledata An iRAP data file produced by I-RAP::iRAP_build_data()
 #' @param filtervars A character vector of variables you wish to include in the table
 #' @param nestedvars A list of vectors of 'nested' variables you wish to include in the table. Nested variables are a set of variables which nest within one another rather than existing independently.
-#' @return A data table showing the final table data
+#' @param indicator The indicator variable from the table
+#' @return A data table containing the final iRAP table
 #' @export
 
-prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
+iRAP_build_table <- function(tabledata,filtervars,nestedvars = NULL,indicator) {
   
   # Define variables that will be constant for every row of table
   
@@ -64,7 +65,7 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
   
   tabulate <- function(x){tabledata %>%
       dplyr::group_by_at(x, .drop=FALSE) %>%
-      dplyr::summarise(prisoners = sum(prisoners))}
+      dplyr::summarise(countvar = sum(.data[[indicator]]))}
   
   suppressMessages(
   
@@ -88,7 +89,7 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
       
       if (i==0) {nestlist <- table}
       
-      nestlist <- dplyr::filter(nestlist,!is.na(!!as.name(x[length(x)-(i+1)])) | is.na(!!as.name(x[length(x)-i])), prisoners > 0)
+      nestlist <- dplyr::filter(nestlist,!is.na(!!as.name(x[length(x)-(i+1)])) | is.na(!!as.name(x[length(x)-i])), countvar > 0)
       
     }
     
@@ -156,9 +157,11 @@ prison_pop_table <- function(tabledata,filtervars,nestedvars = NULL) {
   
   # Make value column numeric
   
-  table$prisoners <- as.numeric(table$prisoners)
+  table$countvar <- as.numeric(table$countvar)
   
-  table <- dplyr::select(table,-prisoners,prisoners)
+  table <- dplyr::select(table,-countvar,countvar)
+  
+  table <- table %>% dplyr::rename_at("countvar", ~ indicator)
   
   return(table)
   

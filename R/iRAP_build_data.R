@@ -23,7 +23,7 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,in
     
     if (datasource == "prison_pop") {
       
-      raw_data <- prison_pop_data_spec(dates[i])
+      raw_data <- prison_pop_datasource(dates[i])
       
     }
 
