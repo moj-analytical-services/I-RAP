@@ -10,7 +10,7 @@
 #' @return A data table containing the final iRAP table
 #' @export
 
-iRAP_build_table <- function(tabledata,filtervars,nestedvars = NULL,indicator) {
+iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,indicator) {
   
   # Define variables that will be constant for every row of table
   
@@ -21,6 +21,12 @@ iRAP_build_table <- function(tabledata,filtervars,nestedvars = NULL,indicator) {
   timevars <- c("time_period",
                  "time_identifier")
   
+  if ("quarter" %in% names(tabledata)) {
+    
+    timevars <- c(timevars,"quarter")
+    
+  }
+  
   geovar_all <- paste(geovars,collapse=".")
   
   timevar_all <- paste(timevars,collapse=".")
@@ -29,6 +35,8 @@ iRAP_build_table <- function(tabledata,filtervars,nestedvars = NULL,indicator) {
   
   if (is.null(nestedvars)) {
       combovars <- filtervars 
+    } else if (is.null(filtervars)) {
+      combovars <- unlist(nestedvars)
     } else {
       combovars <- c(filtervars,unlist(nestedvars))  
     }

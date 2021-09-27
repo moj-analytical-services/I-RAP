@@ -15,7 +15,7 @@
 #' @return A data frame in iRAP format
 #' @export
 
-iRAP_build_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,indicator,datasource) {
+iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepvars,indicator,datasource) {
   
   ## Read datasets from SAS files
   
@@ -25,6 +25,10 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,in
       
       raw_data <- prison_pop_datasource(dates[i])
       
+    } else if (datasource == "prison_receptions") {
+      
+      raw_data <- prison_receptions_datasource(dates[i])
+      
     }
 
     # Convert all columns to character
@@ -33,8 +37,22 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,in
     
     # Add time variables
     
-    raw_data$time_period <- stringr::str_sub(dates[i],1,4)
-    raw_data$time_identifier <- months(as.Date(dates[i],format="%Y%m%d"))
+    if (datasource == "prison_pop") {
+    
+      raw_data$time_period <- stringr::str_sub(dates[i],1,4)
+      raw_data$time_identifier <- months(as.Date(dates[i],format="%Y%m%d"))
+      
+      keep_all <- c("time_period","time_identifier",keepvars)
+    
+    } else if (datasource == "prison_receptions") {
+      
+      raw_data$time_period <- stringr::str_sub(dates[i],1,4)
+      raw_data$time_identifier <- "Calendar year"
+      raw_data$quarter <- stringr::str_to_upper(stringr::str_sub(dates[i],5,6))
+      
+      keep_all <- c("time_period","time_identifier","quarter",keepvars)
+      
+    }
 
     # Combine all selected population files into a single data frame
     
@@ -56,7 +74,7 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,in
   
   # Select limited range of variables for tables
 
-  all_data <- dplyr::select_at(all_data,keepvars)
+  all_data <- dplyr::select_at(all_data,keep_all)
   
   # Rename original variables
   
@@ -74,6 +92,8 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,in
   
   # Create age groups
   
+  if (!is.null(agespecs)) {
+  
   joined_data$age <- as.numeric(joined_data$age)
     
   for (i in 1:length(agespecs)) {
@@ -84,12 +104,16 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs,renames,keepvars,in
     
   }
   
+  join_vars <- c(join_vars,"age")
+  
+  }
+  
   # Aggregate data by all retained variables to compress data frame
 
   suppressMessages(
                 
   finaldata <- joined_data %>%
-    dplyr::group_by_at(c(names(joined_data)[!names(joined_data) %in% c(join_vars,"age")])) %>%
+    dplyr::group_by_at(c(names(joined_data)[!names(joined_data) %in% c(join_vars)])) %>%
     dplyr::summarise(countvar = dplyr::n())
   
   )
