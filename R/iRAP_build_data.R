@@ -15,7 +15,7 @@
 #' @return A data frame in iRAP format
 #' @export
 
-iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepvars,indicator,datasource) {
+iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepvars,indicator,datasource,SHA="main") {
   
   ## Read datasets from SAS files
   
@@ -82,7 +82,7 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
 
   # Match lookup variables to main dataset
   
-  joined_data <- join_lookups(all_data,lookups,join_vars)
+  joined_data <- join_lookups(all_data,lookups,join_vars,SHA)
   
   ## Add geographical variables
   

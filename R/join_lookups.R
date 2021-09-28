@@ -1,6 +1,6 @@
-join_lookups <- function(data,lookups,join_vars) {
+join_lookups <- function(data,lookups,join_vars,SHA="main") {
   
-  lookuplist <- read_lookups()
+  lookuplist <- read_lookups(SHA)
   
   for (i in 1:length(lookups)) {
     
