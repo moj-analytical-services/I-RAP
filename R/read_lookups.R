@@ -1,12 +1,14 @@
-read_lookups <- function() {
+read_lookups <- function(SHA="main") {
   
-  lookups <- jsonlite::fromJSON("https://raw.github.com/moj-analytical-services/harmonisation-reference/main/reference_files/lookups.json")
-  lookups <- lapply(lookups,FUN=function(x){dplyr::mutate(x,dplyr::across(dplyr::everything(), as.character))})
-  lookups <- lapply(lookups,FUN=function(x){x[is.na(x)] <- ""
-                                              return(x)})
+  req <- GET(paste0("https://api.github.com/repos/moj-analytical-services/harmonisation-reference/git/trees/",SHA,"?recursive=1"))
+  stop_for_status(req)
+  filelist <- unlist(lapply(content(req)$tree, "[", "path"), use.names = F)
   
-  lookups$agespecs <- jsonlite::fromJSON("https://raw.github.com/moj-analytical-services/harmonisation-reference/main/reference_files/agespecs.json")
+  filelist <- filelist[stringr::str_detect(filelist,"reference_files/[a-z]+.csv")]
+  
+  lookups <- lapply(filelist,FUN=function(x){read.csv(paste0("https://raw.github.com/moj-analytical-services/harmonisation-reference/",SHA,"/",x))})
+  
+  names(lookups) <- str_sub(basename(filelist),1,-5)
   
   return(lookups)
 }
-  
