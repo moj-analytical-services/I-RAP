@@ -63,7 +63,7 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   # Convert all columns to character
   
-  all_data <- data.frame(lapply(all_data, as.character), stringsAsFactors=FALSE)
+  all_data <- all_data %>% mutate(across(.fns = as.character))
   
   # Select limited range of variables for tables
   
@@ -73,11 +73,12 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
     keep_all <- c(keep_all,"quarter")
   }
 
-  all_data <- dplyr::select_at(all_data,keep_all)
+  all_data <- all_data %>% dplyr::select(dplyr::any_of(keep_all))
   
   # Rename original variables
   
-  all_data <- all_data %>% dplyr::rename_at(dplyr::vars(renames$old_name), ~ renames$new_name)
+  all_data <- all_data %>% dplyr::rename_with(.cols = dplyr::all_of(renames$old_name),
+                                              .fn = ~ renames$new_name)
 
   # Match lookup variables to main dataset
   
