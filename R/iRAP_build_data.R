@@ -18,62 +18,60 @@
 
 iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepvars,indicator,datasource,SHA="main") {
   
-  ## Read datasets from SAS files
+  ## Define function for reading in individual datasets
   
-  for (i in 1:length(dates)) {
+  getdata <- function(date,datasource) {
+    
+    # Read datasets from raw files as specified in datasources.R
     
     if (datasource == "prison_pop") {
       
-      raw_data <- prison_pop_datasource(dates[i])
+      raw_data <- prison_pop_datasource(date)
       
     } else if (datasource == "prison_receptions") {
       
-      raw_data <- prison_receptions_datasource(dates[i])
+      raw_data <- prison_receptions_datasource(date)
       
     }
 
-    # Convert all columns to character
-
-    raw_data <- data.frame(lapply(raw_data, as.character), stringsAsFactors=FALSE)
-    
     # Add time variables
     
     if (datasource == "prison_pop") {
     
-      raw_data$time_period <- stringr::str_sub(dates[i],1,4)
-      raw_data$time_identifier <- months(as.Date(dates[i],format="%Y%m%d"))
-      
-      keep_all <- c("time_period","time_identifier",keepvars)
-    
+      raw_data$time_period <- stringr::str_sub(date,1,4)
+      raw_data$time_identifier <- months(as.Date(date,format="%Y%m%d"))
+
     } else if (datasource == "prison_receptions") {
       
-      raw_data$time_period <- stringr::str_sub(dates[i],1,4)
+      raw_data$time_period <- stringr::str_sub(date,1,4)
       raw_data$time_identifier <- "Calendar year"
-      raw_data$quarter <- stringr::str_to_upper(stringr::str_sub(dates[i],5,6))
-      
-      keep_all <- c("time_period","time_identifier","quarter",keepvars)
-      
-    }
+      raw_data$quarter <- stringr::str_to_upper(stringr::str_sub(date,5,6))
 
-    # Combine all selected population files into a single data frame
+    }
     
-    if (i == 1) {
-
-      all_data <- raw_data
-
-    } else {
-
-      all_data <- dplyr::bind_rows(all_data,raw_data)
-
-    }
-
+    return(raw_data)
+    
   }
   
+  # Loop through all dates combining all raw datasets
+  
+  all_data <- dplyr::bind_rows(lapply(dates,FUN=getdata,datasource=datasource))
+
   # Convert variable names to lower case
 
   names(all_data) <- tolower(names(all_data))
   
+  # Convert all columns to character
+  
+  all_data <- data.frame(lapply(all_data, as.character), stringsAsFactors=FALSE)
+  
   # Select limited range of variables for tables
+  
+  keep_all <- c("time_period","time_identifier",keepvars)
+  
+  if (datasource == "prison_receptions") {
+    keep_all <- c(keep_all,"quarter")
+  }
 
   all_data <- dplyr::select_at(all_data,keep_all)
   
