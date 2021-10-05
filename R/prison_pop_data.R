@@ -6,18 +6,20 @@
 #' @param dates date(s) of the file(s) you wish to use as source data files. Should be a character vector of dates in the format "yyyymmdd" 
 #' @return a data frame of prison population data
 #' @export
+#' @importFrom magrittr "%>%"
 
-prison_pop_data <- function(dates) {
+prison_pop_data <- function(dates, SHA="main") {
   
   popdata <- iRAP_build_data(dates,
                              agespecs = read_lookups()$agespecs,
                              lookups = c("sex","custody","ethnicity","nationality","prison","offence"),
                              join_vars = c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code","offence_code"),
-                             renames = bind_cols(old_name = c("sex","custype","ethnic_group_short","nationality_short","estab","offence_group"),
+                             renames = dplyr::bind_cols(old_name = c("sex","custype","ethnic_group_short","nationality_short","estab","offence_group"),
                                                  new_name = c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code","offence_code")),
                              keepvars = c("time_period","time_identifier","sex","custype","age","offence_group","ethnic_group_short","nationality_short","estab","offence_group"),
                              indicator = "prisoners",
-                             datasource = "prison_pop")
+                             datasource = "prison_pop",
+                             SHA = SHA)
   
   return(popdata)
   

@@ -4,7 +4,13 @@
 \alias{iRAP_build_table}
 \title{Build an iRAP Table}
 \usage{
-iRAP_build_table(tabledata, filtervars, nestedvars = NULL, indicator)
+iRAP_build_table(
+  tabledata,
+  filtervars = NULL,
+  nestedvars = NULL,
+  nototalvars = NULL,
+  indicator
+)
 }
 \arguments{
 \item{tabledata}{An iRAP data file produced by I-RAP::iRAP_build_data()}

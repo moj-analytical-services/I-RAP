@@ -17,5 +17,6 @@ Imports:
         gtools,
         tidyr,
         magrittr,
-        jsonlite
+        jsonlite,
+        httr
 RoxygenNote: 7.1.2

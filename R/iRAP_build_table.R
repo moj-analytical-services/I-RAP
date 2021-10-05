@@ -9,8 +9,9 @@
 #' @param indicator The indicator variable from the table
 #' @return A data table containing the final iRAP table
 #' @export
+#' @importFrom magrittr "%>%"
 
-iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,indicator) {
+iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,nototalvars = NULL,indicator) {
   
   # Define variables that will be constant for every row of table
   
@@ -30,6 +31,16 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,indic
   geovar_all <- paste(geovars,collapse=".")
   
   timevar_all <- paste(timevars,collapse=".")
+  
+  if (!is.null(nototalvars)) {
+    
+    nototals <- c(geovar_all,timevar_all,nototalvars)
+    
+  } else {
+    
+    nototals <- c(geovar_all,timevar_all)
+    
+  }
   
   # create combination of filter and nested vars
   
@@ -56,7 +67,7 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,indic
                 append("")
   
   full_list <- filterlist %>%
-    lapply(FUN=function(x) c(timevar_all,geovar_all,x)) %>%
+    lapply(FUN=function(x) c(nototals,x)) %>%
     lapply(FUN=function(x) x <- x[x!=""]) %>%
     lapply(FUN=unlist)
   

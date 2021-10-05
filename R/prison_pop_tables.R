@@ -6,10 +6,11 @@
 #' @param dates date(s) of the file(s) you wish to use as source data files. Should be a character vector of dates in the format "yyyymmdd"
 #' @return a list of data tables containing standard published data 
 #' @export
+#' @importFrom magrittr "%>%"
 
-prison_pop_tables <- function(dates) {
+prison_pop_tables <- function(dates, SHA="main") {
   
-  popdata <- prison_pop_data(dates)
+  popdata <- prison_pop_data(dates, SHA)
   
   latestdate <- as.character(max(as.numeric(dates)))
   
@@ -21,11 +22,11 @@ prison_pop_tables <- function(dates) {
   
   Table1_1 = iRAP_build_table(popdata,c("sex","age_group_adult"),custodyvars,indicator = "prisoners"),
   
-  Table1_2 = iRAP_build_table(filter(popdata,custody_type %in% c("Untried","Convicted unsentenced") | (custody_group == "Sentenced" & custody_type !="Fine defaulter")),
+  Table1_2 = iRAP_build_table(dplyr::filter(popdata,custody_type %in% c("Untried","Convicted unsentenced") | (custody_group == "Sentenced" & custody_type !="Fine defaulter")),
                               c("sex","age_group_adult","offence_group"),
                               list(c("custody_group","custody_type")),
                               indicator="prisoners") %>%
-              filter(custody_group != "Sentenced" | (custody_group == "Sentenced" & custody_type =="Total")),
+              dplyr::filter(custody_group != "Sentenced" | (custody_group == "Sentenced" & custody_type =="Total")),
   
   Table1_3 = iRAP_build_table(popdata,c("sex","age_group","custody_group"),indicator="prisoners"),
   

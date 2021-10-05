@@ -16,15 +16,16 @@ prison_receptions_datasource <- function(date) {
   receptions_data <- paws_read_using(FUN = haven::read_sas,
                                      path = s3path)
   
-  names(receptions_data) <- tolower(names(receptions_data))
+  receptions_data$Subsequent_JISLlen_Band[receptions_data$Untried_Flag == 1] <- "Remand untried"
+  receptions_data$Subsequent_JISLlen_Band[receptions_data$Convicted_Flag == 1] <- "Remand convicted"
+  receptions_data$Subsequent_JISLlen_Band[receptions_data$Civil_Flag == 1] <- "Civil"
+  receptions_data$Subsequent_JISLlen_Band[receptions_data$Subsequent_JISLlen_Band == "L Unknown length – determinate sentence" ] <- "Unknown"
   
-  receptions_data$subsequent_jisllen_band <- sub(".*? (.+)", "\\1", receptions_data$subsequent_jisllen_band)
+  receptions_data <- receptions_data %>% 
+                        dplyr::mutate(age = dplyr::select(., Untried_Age, Sentenced_Age, Recall_Age, Convicted_Age, First_Age) %>% rowMeans(na.rm = TRUE))
   
-  receptions_data <- receptions_data %>% dplyr::filter(first_flag == 1)  
-  
-  receptions_data$subsequent_jisllen_band[(receptions_data$untried_flag == 1 | receptions_data$convicted_flag == 1)] <- "Remand"
-  receptions_data$subsequent_jisllen_band[receptions_data$civil_flag == 1] <- "Civil"
-  
+  receptions_data$age[is.na(receptions_data$age)] <- 0
+
   return(receptions_data)
   
 }

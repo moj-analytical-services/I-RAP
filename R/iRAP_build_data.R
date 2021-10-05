@@ -14,6 +14,7 @@
 #' @param datasource a string showing which data source you want to use. The only accepted value currently is 'prison_pop'
 #' @return A data frame in iRAP format
 #' @export
+#' @importFrom magrittr "%>%"
 
 iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepvars,indicator,datasource,SHA="main") {
   
@@ -78,7 +79,7 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   # Rename original variables
   
-  all_data <- all_data %>% dplyr::rename_at(vars(renames$old_name), ~ renames$new_name)
+  all_data <- all_data %>% dplyr::rename_at(dplyr::vars(renames$old_name), ~ renames$new_name)
 
   # Match lookup variables to main dataset
   

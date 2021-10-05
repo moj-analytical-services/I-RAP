@@ -4,7 +4,7 @@
 \alias{prison_pop_data}
 \title{Build a prison population dataset in iRAP format}
 \usage{
-prison_pop_data(dates)
+prison_pop_data(dates, SHA = "main")
 }
 \arguments{
 \item{dates}{date(s) of the file(s) you wish to use as source data files. Should be a character vector of dates in the format "yyyymmdd"}
