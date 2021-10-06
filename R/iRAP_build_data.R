@@ -63,7 +63,7 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   # Convert all columns to character
   
-  all_data <- all_data %>% mutate(across(.fns = as.character))
+  all_data <- all_data %>% dplyr::mutate(dplyr::across(.fns = as.character))
   
   # Select limited range of variables for tables
   
@@ -94,17 +94,17 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   if (!is.null(agespecs)) {
   
-  joined_data$age <- as.numeric(joined_data$age)
-    
-  for (i in 1:length(agespecs)) {
-    
-    joined_data[[names(agespecs[i])]] <- cut(joined_data$age,breaks=c(agespecs[[i]]$start_age,999),
-                                        labels=agespecs[[i]]$label,
-                                        right=FALSE)
-    
-  }
-  
-  join_vars <- c(join_vars,"age")
+      joined_data$age <- as.numeric(joined_data$age)
+        
+      for (i in 1:length(agespecs)) {
+        
+        joined_data[[names(agespecs[i])]] <- cut(joined_data$age,breaks=c(agespecs[[i]]$start_age,999),
+                                            labels=agespecs[[i]]$label,
+                                            right=FALSE)
+        
+      }
+      
+      join_vars <- c(join_vars,"age")
   
   }
   
