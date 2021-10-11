@@ -83,7 +83,7 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   # Creates a final data set with every possible combination of totals
   
   tabulate <- function(x){tabledata %>%
-      dplyr::group_by_at(x, .drop=FALSE) %>%
+      dplyr::group_by(dplyr::across(x), .drop=FALSE) %>%
       dplyr::summarise(countvar = sum(.data[[indicator]]))}
   
   suppressMessages(
@@ -180,7 +180,8 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   
   table <- dplyr::select(table,-countvar,countvar)
   
-  table <- table %>% dplyr::rename_at("countvar", ~ indicator)
+  table <- table %>% dplyr::rename_with(.cols = "countvar",
+                                        .fn = ~ indicator)
   
   return(table)
   
