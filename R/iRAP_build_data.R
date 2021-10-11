@@ -113,12 +113,13 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   suppressMessages(
                 
   finaldata <- joined_data %>%
-    dplyr::group_by_at(c(names(joined_data)[!names(joined_data) %in% c(join_vars)])) %>%
+    dplyr::group_by(dplyr::across(c(names(joined_data)[!names(joined_data) %in% c(join_vars)]))) %>%
     dplyr::summarise(countvar = dplyr::n())
   
   )
   
- finaldata <- finaldata %>% dplyr::rename_at("countvar", ~ indicator)
+ finaldata <- finaldata %>% dplyr::rename_with(.cols = "countvar",
+                                                .fn = ~ indicator)
       
   return(finaldata)
 
