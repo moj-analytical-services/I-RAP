@@ -34,7 +34,7 @@ join_lookups <- function(data,lookups,join_vars,SHA="main") {
   }
   
   
-  data_refs <- dplyr::mutate(data,case_ref = row_number())
+  data_refs <- dplyr::mutate(data,case_ref = dplyr::row_number())
   
   joined_all <- mapply(join_one,lookups,join_vars,MoreArgs = list(data=data_refs,lookuplist=lookuplist), SIMPLIFY = TRUE) %>%
     purrr::reduce(dplyr::left_join, by="case_ref") %>%
