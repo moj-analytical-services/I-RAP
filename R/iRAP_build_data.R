@@ -22,17 +22,9 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   getdata <- function(date,datasource) {
     
-    # Read datasets from raw files as specified in datasources.R
+    # Read datasets from raw files as specified in setsource.R
     
-    if (datasource == "prison_pop") {
-      
-      raw_data <- prison_pop_datasource(date)
-      
-    } else if (datasource == "prison_receptions") {
-      
-      raw_data <- prison_receptions_datasource(date)
-      
-    }
+    raw_data <- readsource(date,datasource)
 
     # Add time variables
     
@@ -40,12 +32,16 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
     
       raw_data$time_period <- stringr::str_sub(date,1,4)
       raw_data$time_identifier <- months(as.Date(date,format="%Y%m%d"))
+      
+      keepvars <- c(keepvars,"time_period","time_identifier")
 
     } else if (datasource == "prison_receptions") {
       
       raw_data$time_period <- stringr::str_sub(date,1,4)
       raw_data$time_identifier <- "Calendar year"
       raw_data$quarter <- stringr::str_to_upper(stringr::str_sub(date,5,6))
+      
+      keepvars <- c(keepvars,"time_period","time_identifier","quarter")
 
     }
     
@@ -67,13 +63,7 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   # Select limited range of variables for tables
   
-  keep_all <- c("time_period","time_identifier",keepvars)
-  
-  if (datasource == "prison_receptions") {
-    keep_all <- c(keep_all,"quarter")
-  }
-
-  all_data <- all_data %>% dplyr::select(dplyr::any_of(keep_all))
+  all_data <- all_data %>% dplyr::select(dplyr::any_of(keepvars))
   
   # Rename original variables
   
