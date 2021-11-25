@@ -76,6 +76,9 @@ A specific form of iRAP_build_tables with preset parameters for processing the p
 
 This function runs prison_receptions_data. It does not need to be run separately. 
 
+```r
+prison_receptions_tables(dates=c("2020q1","20200q2","2020q3","2020q4"), SHA="main")
+```
 
 
 
