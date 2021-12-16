@@ -32,16 +32,12 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
     
       raw_data$time_period <- stringr::str_sub(date,1,4)
       raw_data$time_identifier <- months(as.Date(date,format="%Y%m%d"))
-      
-      keepvars <- c(keepvars,"time_period","time_identifier")
 
     } else if (datasource == "prison_receptions") {
       
       raw_data$time_period <- stringr::str_sub(date,1,4)
       raw_data$time_identifier <- "Calendar year"
       raw_data$quarter <- stringr::str_to_upper(stringr::str_sub(date,5,6))
-      
-      keepvars <- c(keepvars,"time_period","time_identifier","quarter")
 
     }
     
@@ -62,6 +58,16 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   all_data <- all_data %>% dplyr::mutate(dplyr::across(.fns = as.character))
   
   # Select limited range of variables for tables
+  
+  if (datasource == "prison_pop") {
+    
+    keepvars <- c(keepvars,"time_period","time_identifier")
+    
+  } else if (datasource == "prison_receptions") {
+    
+    keepvars <- c(keepvars,"time_period","time_identifier","quarter")
+    
+  }
   
   all_data <- all_data %>% dplyr::select(dplyr::any_of(keepvars))
   
