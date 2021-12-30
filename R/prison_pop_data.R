@@ -16,7 +16,7 @@ prison_pop_data <- function(dates, SHA="main") {
                              join_vars = c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code","offence_code"),
                              renames = dplyr::bind_cols(old_name = c("sex","custype","ethnic_group_short","nationality_short","estab","offence_group"),
                                                  new_name = c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code","offence_code")),
-                             keepvars = c("time_period","time_identifier","sex","custype","age","offence_group","ethnic_group_short","nationality_short","estab","offence_group"),
+                             in_vars = c("Sex","custype","AGE","Offence_group","ETHNIC_GROUP_SHORT","NATIONALITY_SHORT","ESTAB","Offence_group"),
                              indicator = "prisoners",
                              datasource = "prison_pop",
                              SHA = SHA)
