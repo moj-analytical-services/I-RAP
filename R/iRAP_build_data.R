@@ -16,7 +16,8 @@
 #' @export
 #' @importFrom magrittr "%>%"
 
-iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,in_vars=NULL,indicator,datasource,SHA="main") {
+iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,lookups=NULL,custom_lookups=NULL,
+                            age_lookups=NULL,join_vars=NULL,indicator,SHA="main") {
   
   # Loop through all dates combining all raw datasets
   
@@ -32,12 +33,19 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,in_var
   
   # Rename original variables
   
-  all_data <- all_data %>% dplyr::rename_with(.cols = dplyr::all_of(renames$old_name),
+  if (!is.null(renames)) {
+  
+    all_data <- all_data %>% dplyr::rename_with(.cols = dplyr::all_of(renames$old_name),
                                               .fn = ~ renames$new_name)
+  }
 
   # Match lookup variables to main dataset
   
-  joined_data <- join_lookups(all_data,lookups,join_vars,SHA)
+  if (!is.null(lookups) | !is.null(custom_lookups)) {
+  
+    joined_data <- join_lookups(all_data,lookups,custom_lookups,join_vars,SHA)
+  
+  }
   
   ## Add geographical variables
   
@@ -47,33 +55,21 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,in_var
   
   # Create age groups
   
-  if (!is.null(agespecs)) {
-  
-      joined_data$age <- as.numeric(joined_data$age)
-        
-      for (i in 1:length(agespecs)) {
-        
-        joined_data[[names(agespecs[i])]] <- cut(joined_data$age,breaks=c(agespecs[[i]]$start_age,999),
-                                            labels=agespecs[[i]]$label,
-                                            right=FALSE)
-        
-      }
-      
-      join_vars <- c(join_vars,"age")
+  if (!is.null(age_lookups)) {
+    
+    joined_data <- add_age_groups(joined_data,age_lookups,SHA)
   
   }
   
   # Aggregate data by all retained variables to compress data frame
 
-  suppressMessages(
-                
   finaldata <- joined_data %>%
-    dplyr::group_by(dplyr::across(c(names(joined_data)[!names(joined_data) %in% c(join_vars)]))) %>%
+    dplyr::group_by(dplyr::across(c(names(joined_data)))) %>%
     dplyr::summarise(countvar = dplyr::n())
   
-  )
+  # Rename final summary count variable to name specified in indicator argument
   
- finaldata <- finaldata %>% dplyr::rename_with(.cols = "countvar",
+  finaldata <- finaldata %>% dplyr::rename_with(.cols = "countvar",
                                                 .fn = ~ indicator)
       
   return(finaldata)

@@ -4,6 +4,7 @@
 #' It is a specific form of the iRAP_build_table() function with specified parameters for the standard published prison population tables
 #'
 #' @param dates date(s) of the file(s) you wish to use as source data files. Should be a character vector of dates in the format "yyyymmdd"
+#' @param SHA SHA for the lookup files you want to use
 #' @return a list of data tables containing standard published data 
 #' @export
 #' @importFrom magrittr "%>%"
