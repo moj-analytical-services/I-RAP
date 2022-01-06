@@ -18,5 +18,7 @@ Imports:
         tidyr,
         magrittr,
         jsonlite,
-        httr
+        httr,
+        tibble,
+        tidyselect
 RoxygenNote: 7.1.2
