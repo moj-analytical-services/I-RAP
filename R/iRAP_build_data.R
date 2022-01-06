@@ -16,7 +16,7 @@
 #' @export
 #' @importFrom magrittr "%>%"
 
-iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,lookups=NULL,custom_lookups=NULL,
+iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,replace=NULL,lookups=NULL,custom_lookups=NULL,
                             age_lookups=NULL,join_vars=NULL,indicator,SHA="main") {
   
   # Loop through all dates combining all raw datasets
@@ -30,6 +30,14 @@ iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,lookups=N
   # Convert all columns to character
   
   all_data <- all_data %>% dplyr::mutate(dplyr::across(.fns = as.character))
+  
+  # Replace variable values
+  
+  if (!is.null(replace)) {
+    
+    all_data <- replace_values(all_data,replace)
+    
+  }
   
   # Rename original variables
   

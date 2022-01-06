@@ -10,6 +10,9 @@ join_lookups <- function(data,lookups,custom_lookups,join_vars,SHA="main") {
   
   if (!is.null(custom_lookups)) {
     
+    custom_lookups <- lapply(custom_lookups,FUN=function(x){
+                            dplyr::mutate(x,dplyr::across(dplyr::everything(), as.character))})
+    
     if (is.null(lookups)) {
       
       lookuplist <- custom_lookups
