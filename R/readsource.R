@@ -8,8 +8,8 @@ readsource <- function(date,datasource) {
   
   if (source$format == "SAS") {
     
-    data <- paws_read_using(FUN = haven::read_sas,
-                            path = source$s3path)
+    data <- botor::s3_read(paste0("s3://",source$s3path),
+                           haven::read_sas)
   } 
   
   # Run any extra processing specified in setsource.R
