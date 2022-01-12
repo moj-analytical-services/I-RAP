@@ -17,7 +17,7 @@
 #' @importFrom magrittr "%>%"
 
 iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,replace=NULL,lookups=NULL,custom_lookups=NULL,
-                            age_lookups=NULL,join_vars=NULL,indicator,SHA="main") {
+                            age_lookups=NULL,join_vars=NULL,count_indicator,mean_indicator=NULL,mean_indicator_var=NULL,SHA="main") {
   
   # Loop through all dates combining all raw datasets
   
@@ -51,34 +51,33 @@ iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,replace=N
   
   if (!is.null(lookups) | !is.null(custom_lookups)) {
   
-    joined_data <- join_lookups(all_data,lookups,custom_lookups,join_vars,SHA)
+    all_data <- join_lookups(all_data,lookups,custom_lookups,join_vars,SHA)
   
   }
   
   ## Add geographical variables
   
-  joined_data$geographic_level <- "National"
-  joined_data$country_code <- "K04000001"
-  joined_data$country_name <- "England and Wales"
+  all_data$geographic_level <- "National"
+  all_data$country_code <- "K04000001"
+  all_data$country_name <- "England and Wales"
   
   # Create age groups
   
   if (!is.null(age_lookups)) {
     
-    joined_data <- add_age_groups(joined_data,age_lookups,SHA)
+    all_data <- add_age_groups(all_data,age_lookups,SHA)
+    
+    all_data <- dplyr::select(all_data,-age)
   
   }
   
   # Aggregate data by all retained variables to compress data frame
 
-  finaldata <- joined_data %>%
-    dplyr::group_by(dplyr::across(c(names(joined_data)))) %>%
-    dplyr::summarise(countvar = dplyr::n())
-  
-  # Rename final summary count variable to name specified in indicator argument
-  
-  finaldata <- finaldata %>% dplyr::rename_with(.cols = "countvar",
-                                                .fn = ~ indicator)
+  finaldata <- all_data %>%
+    make_indicators(count_indicator,mean_indicator,mean_indicator_var) %>%
+    droplevels() %>%
+    dplyr::ungroup()
+
       
   return(finaldata)
 

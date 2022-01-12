@@ -14,7 +14,7 @@ addtime <- function(data,date,datasource) {
     data$time_period <- stringr::str_sub(date,1,4)
     data$time_identifier <- months(as.Date(date,format="%Y%m%d"))
     
-  } else if (datasource == "prison_receptions") {
+  } else if (datasource %in% c("prison_receptions","prison_releases")) {
     
     data$time_period <- stringr::str_sub(date,1,4)
     data$time_identifier <- "Calendar year"
