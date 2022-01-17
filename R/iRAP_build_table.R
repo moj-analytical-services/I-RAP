@@ -11,7 +11,8 @@
 #' @export
 #' @importFrom magrittr "%>%"
 
-iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,nototalvars = NULL,indicator) {
+iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,nototalvars = NULL,
+                             count_indicator,mean_indicator=NULL) {
   
   # Define variables that will be constant for every row of table
   
