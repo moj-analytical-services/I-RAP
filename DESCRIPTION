@@ -20,5 +20,6 @@ Imports:
         jsonlite,
         httr,
         tibble,
-        tidyselect
+        tidyselect,
+        rlang
 RoxygenNote: 7.1.2

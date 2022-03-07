@@ -7,8 +7,8 @@ replace_values <- function(data,changes) {
     for (j in 1:nrow(changes[[i]])) {
   
       replaced_data <- dplyr::mutate(replaced_data,
-                        "{names(changes[i])}" := replace(!!sym(names(changes[i])),
-                                                  !!sym(names(changes[i])) == changes[[i]]$old[j],
+                        "{names(changes[i])}" := replace(!!rlang::sym(names(changes[i])),
+                                                  !!rlang::sym(names(changes[i])) == changes[[i]]$old[j],
                                                   changes[[i]]$new[j]))
   
   }
