@@ -17,20 +17,20 @@ prison_receptions_tables <- function(dates, SHA="main") {
   
   all_tables <- list(
     
-    Table2_1 = iRAP_build_table(first_receptions,"sex",nestedvars=list(c("custody_group","custody_detail","custody_sentence_detail")),indicator="receptions"),
+    Table2_1 = iRAP_build_table(first_receptions,"sex",nestedvars=list(c("custody_group","custody_detail","custody_sentence_detail")),count_indicator="receptions"),
     
-    Table2_2 = iRAP_build_table(first_receptions,nestedvars=list(c("nationality_group","nationality_continent","nationality")),indicator="receptions"),
+    Table2_2 = iRAP_build_table(first_receptions,nestedvars=list(c("nationality_group","nationality_continent","nationality")),count_indicator="receptions"),
     
-    Table2_3 = iRAP_build_table(first_receptions,nestedvars=list(c("prison_type","prison_name")),indicator="receptions"),
+    Table2_3 = iRAP_build_table(first_receptions,nestedvars=list(c("prison_type","prison_name")),count_indicator="receptions"),
     
-    Table2_4a = iRAP_build_table(dplyr::filter(receptions,custody_group == "Remand first receptions"),c("custody_type","age_group_adult","sex"),indicator="receptions"),
+    Table2_4a = iRAP_build_table(dplyr::filter(receptions,custody_group == "Remand first receptions"),c("custody_type","age_group_adult","sex"),count_indicator="receptions"),
   
-    Table2_4b = iRAP_build_table(dplyr::filter(receptions,custody_group == "Remand first receptions"),c("custody_type","offence_group","sex"),indicator="receptions"),
+    Table2_4b = iRAP_build_table(dplyr::filter(receptions,custody_group == "Remand first receptions"),c("custody_type","offence_group","sex"),count_indicator="receptions"),
     
-    Table2_5a = iRAP_build_table(dplyr::filter(receptions,custody_group == "Sentenced first receptions" & custody_type != "Recalls"),c("age_group_adult","sex"),nestedvars=list(c("custody_type","custody_detail","custody_sentence_detail")),indicator="receptions"),
+    Table2_5a = iRAP_build_table(dplyr::filter(receptions,custody_group == "Sentenced first receptions" & custody_type != "Recalls"),c("age_group_adult","sex"),nestedvars=list(c("custody_type","custody_detail","custody_sentence_detail")),count_indicator="receptions"),
     
     Table2_5b = iRAP_build_table(dplyr::filter(receptions,custody_group == "Sentenced first receptions" & !custody_type %in% c("Recalls","Fine defaulter")),
-                                               c("sex","offence_group"),indicator="receptions")
+                                               c("sex","offence_group"),count_indicator="receptions")
     
     )
   

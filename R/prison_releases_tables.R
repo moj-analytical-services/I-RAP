@@ -15,9 +15,9 @@ prison_releases_tables <- function(dates, SHA="main") {
   
   all_tables <- list(
     
-    Table3_1 = iRAP_build_table(releases,filtervars=c("sex","age_group_adult"),nestedvars=list(c("custody_group","custody_type","custody_detail","custody_sentence_detail")),nototalvars="custody_group",indicator="releases"),
+    Table3_1 = iRAP_build_table(releases,filtervars=c("sex","age_group_adult"),nestedvars=list(c("custody_group","custody_type","custody_detail","custody_sentence_detail")),nototalvars="custody_group",count_indicator="releases"),
 
-    Table3_2i = iRAP_build_table(dplyr::filter(releases,custody_type=="Determinate sentences"),filtervars=c("sex","age_group_adult"),nestedvars=list(c("custody_group","custody_type","custody_detail","custody_sentence_detail")),nototalvars="custody_group",indicator="mean_time_served")
+    Table3_2i = iRAP_build_table(dplyr::filter(releases,custody_type=="Determinate sentences"),filtervars=c("sex"),nestedvars=list(c("custody_group","custody_type","custody_detail","custody_sentence_detail")),nototalvars="custody_group",count_indicator="releases",mean_indicator="mean_time_served")
     
   )
   

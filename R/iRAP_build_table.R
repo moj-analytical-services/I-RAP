@@ -85,7 +85,7 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   
   tabulate <- function(x){tabledata %>%
       dplyr::group_by(dplyr::across(x), .drop=FALSE) %>%
-      dplyr::summarise(countvar = sum(.data[[indicator]]))}
+      dplyr::summarise(countvar = sum(.data[[count_indicator]]))}
   
   suppressMessages(
   
