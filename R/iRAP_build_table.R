@@ -83,9 +83,21 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   # This means that every variable is totalled by every other
   # Creates a final data set with every possible combination of totals
   
+  if (is.null(mean_indicator)) {
+  
   tabulate <- function(x){tabledata %>%
       dplyr::group_by(dplyr::across(x), .drop=FALSE) %>%
       dplyr::summarise(countvar = sum(.data[[count_indicator]]))}
+  
+  } else {
+    
+    tabulate <- function(x){tabledata %>%
+        dplyr::group_by(dplyr::across(x), .drop=FALSE) %>%
+        dplyr::summarise(countvar = sum(.data[[count_indicator]]),
+                         meanvar = stats::weighted.mean(.data[[mean_indicator]],.data[[count_indicator]],na.rm=TRUE))
+        }
+    
+  }
   
   suppressMessages(
   
@@ -184,6 +196,17 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   table <- table %>% dplyr::rename_with(.cols = "countvar",
                                         .fn = ~ count_indicator)
   
+ if (!is.null(mean_indicator)) {
+    
+    table$meanvar <- as.numeric(table$meanvar)
+    
+    table <- dplyr::select(table,-meanvar,meanvar)
+    
+    table <- table %>% dplyr::rename_with(.cols = "meanvar",
+                                          .fn = ~ mean_indicator)
+    
+  }
+
   return(table)
   
 }

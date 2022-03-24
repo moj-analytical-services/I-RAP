@@ -18,7 +18,7 @@ prison_releases_data <- function(dates, SHA="main") {
                                  lookups = c("sex","custody_releases"),
                                  age_lookups = "all",
                                  count_indicator = "releases",
-                                 mean_indicator = "mean_time_served",
+                                 mean_indicator = "mean_sentence_length",
                                  mean_indicator_var = "avesen",
                                  SHA=SHA
                                  )
