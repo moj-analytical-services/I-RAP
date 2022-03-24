@@ -1,3 +1,7 @@
+# Function to set up instructions for importing data from different data sources
+# Specifies file path, file format and any bespoke extra processing steps
+# Returns a list of these values
+
 setsource <- function(date, datasource) {
   
   if (datasource == "prison_pop") {

@@ -5,33 +5,35 @@
 \title{Build an iRap formatted data file from raw files}
 \usage{
 iRAP_build_data(
-  dates,
-  lookups,
-  join_vars,
-  agespecs = NULL,
-  renames,
-  keepvars,
-  indicator,
   datasource,
+  dates,
+  in_vars = NULL,
+  renames = NULL,
+  replace = NULL,
+  lookups = NULL,
+  custom_lookups = NULL,
+  age_lookups = NULL,
+  join_vars = NULL,
+  indicator,
   SHA = "main"
 )
 }
 \arguments{
+\item{datasource}{a string showing which data source you want to use. The only accepted value currently is 'prison_pop'}
+
 \item{dates}{date(s) of the file(s) you wish to use as source data files. Should be a character vector of dates in the format "yyyymmdd"}
+
+\item{in_vars}{a character vector of variables you want to keep from the original dataset}
+
+\item{renames}{a data frame showing the old and new names of variables to rename}
 
 \item{lookups}{a character vector of the lookups you want to use for creating new variables}
 
 \item{join_vars}{a character vector of variable names that you want to use to join to the lookup tables}
 
-\item{agespecs}{a list containing data frame(s) each of which specifies age bands to use}
-
-\item{renames}{a data frame showing the old and new names of variables to rename}
-
-\item{keepvars}{a character vector of variables you want to keep from the original dataset}
-
 \item{indicator}{a string showing the name you want to give to the final count variable}
 
-\item{datasource}{a string showing which data source you want to use. The only accepted value currently is 'prison_pop'}
+\item{agespecs}{a list containing data frame(s) each of which specifies age bands to use}
 }
 \value{
 A data frame in iRAP format

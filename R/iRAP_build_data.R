@@ -9,45 +9,19 @@
 #' @param join_vars a character vector of variable names that you want to use to join to the lookup tables
 #' @param agespecs a list containing data frame(s) each of which specifies age bands to use
 #' @param renames a data frame showing the old and new names of variables to rename
-#' @param keepvars a character vector of variables you want to keep from the original dataset
+#' @param in_vars a character vector of variables you want to keep from the original dataset
 #' @param indicator a string showing the name you want to give to the final count variable
 #' @param datasource a string showing which data source you want to use. The only accepted value currently is 'prison_pop'
 #' @return A data frame in iRAP format
 #' @export
 #' @importFrom magrittr "%>%"
 
-iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepvars,indicator,datasource,SHA="main") {
-  
-  ## Define function for reading in individual datasets
-  
-  getdata <- function(date,datasource) {
-    
-    # Read datasets from raw files as specified in setsource.R
-    
-    raw_data <- readsource(date,datasource)
-
-    # Add time variables
-    
-    if (datasource == "prison_pop") {
-    
-      raw_data$time_period <- stringr::str_sub(date,1,4)
-      raw_data$time_identifier <- months(as.Date(date,format="%Y%m%d"))
-
-    } else if (datasource == "prison_receptions") {
-      
-      raw_data$time_period <- stringr::str_sub(date,1,4)
-      raw_data$time_identifier <- "Calendar year"
-      raw_data$quarter <- stringr::str_to_upper(stringr::str_sub(date,5,6))
-
-    }
-    
-    return(raw_data)
-    
-  }
+iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,replace=NULL,lookups=NULL,custom_lookups=NULL,
+                            age_lookups=NULL,join_vars=NULL,indicator,SHA="main") {
   
   # Loop through all dates combining all raw datasets
   
-  all_data <- dplyr::bind_rows(lapply(dates,FUN=getdata,datasource=datasource))
+  all_data <- dplyr::bind_rows(lapply(dates,FUN=readsource,datasource=datasource,in_vars=in_vars))
 
   # Convert variable names to lower case
 
@@ -57,28 +31,29 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   all_data <- all_data %>% dplyr::mutate(dplyr::across(.fns = as.character))
   
-  # Select limited range of variables for tables
+  # Replace variable values
   
-  if (datasource == "prison_pop") {
+  if (!is.null(replace)) {
     
-    keepvars <- c(keepvars,"time_period","time_identifier")
-    
-  } else if (datasource == "prison_receptions") {
-    
-    keepvars <- c(keepvars,"time_period","time_identifier","quarter")
+    all_data <- replace_values(all_data,replace)
     
   }
   
-  all_data <- all_data %>% dplyr::select(dplyr::any_of(keepvars))
-  
   # Rename original variables
   
-  all_data <- all_data %>% dplyr::rename_with(.cols = dplyr::all_of(renames$old_name),
+  if (!is.null(renames)) {
+  
+    all_data <- all_data %>% dplyr::rename_with(.cols = dplyr::all_of(renames$old_name),
                                               .fn = ~ renames$new_name)
+  }
 
   # Match lookup variables to main dataset
   
-  joined_data <- join_lookups(all_data,lookups,join_vars,SHA)
+  if (!is.null(lookups) | !is.null(custom_lookups)) {
+  
+    joined_data <- join_lookups(all_data,lookups,custom_lookups,join_vars,SHA)
+  
+  }
   
   ## Add geographical variables
   
@@ -88,33 +63,21 @@ iRAP_build_data <- function(dates,lookups,join_vars,agespecs=NULL,renames,keepva
   
   # Create age groups
   
-  if (!is.null(agespecs)) {
-  
-      joined_data$age <- as.numeric(joined_data$age)
-        
-      for (i in 1:length(agespecs)) {
-        
-        joined_data[[names(agespecs[i])]] <- cut(joined_data$age,breaks=c(agespecs[[i]]$start_age,999),
-                                            labels=agespecs[[i]]$label,
-                                            right=FALSE)
-        
-      }
-      
-      join_vars <- c(join_vars,"age")
+  if (!is.null(age_lookups)) {
+    
+    joined_data <- add_age_groups(joined_data,age_lookups,SHA)
   
   }
   
   # Aggregate data by all retained variables to compress data frame
 
-  suppressMessages(
-                
   finaldata <- joined_data %>%
-    dplyr::group_by(dplyr::across(c(names(joined_data)[!names(joined_data) %in% c(join_vars)]))) %>%
+    dplyr::group_by(dplyr::across(c(names(joined_data)))) %>%
     dplyr::summarise(countvar = dplyr::n())
   
-  )
+  # Rename final summary count variable to name specified in indicator argument
   
- finaldata <- finaldata %>% dplyr::rename_with(.cols = "countvar",
+  finaldata <- finaldata %>% dplyr::rename_with(.cols = "countvar",
                                                 .fn = ~ indicator)
       
   return(finaldata)

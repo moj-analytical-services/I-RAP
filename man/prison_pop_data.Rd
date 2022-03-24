@@ -8,6 +8,8 @@ prison_pop_data(dates, SHA = "main")
 }
 \arguments{
 \item{dates}{date(s) of the file(s) you wish to use as source data files. Should be a character vector of dates in the format "yyyymmdd"}
+
+\item{SHA}{SHA for the lookup files you want to use}
 }
 \value{
 a data frame of prison population data

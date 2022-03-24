@@ -3,7 +3,7 @@ Type: Package
 Title: Package of iRAP functions
 Version: 0.1.0
 Author: philip.hall@justice.gov.uk
-Maintainer: philip.hall@justice.gov.uk
+Maintainer: Phil Hall <philip.hall@justice.gov.uk>
 Description: Package of functions for producing data in iRAP format
 License: OGL
 Encoding: UTF-8
@@ -18,5 +18,12 @@ Imports:
         tidyr,
         magrittr,
         jsonlite,
-        httr
+        httr,
+        tibble,
+        tidyselect,
+        rlang
 RoxygenNote: 7.1.2
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
