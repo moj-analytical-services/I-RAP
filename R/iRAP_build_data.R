@@ -21,7 +21,7 @@ iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,replace=N
   
   # Loop through all dates combining all raw datasets
   
-  all_data <- dplyr::bind_rows(lapply(dates,FUN=getdata,datasource=datasource,in_vars=in_vars))
+  all_data <- dplyr::bind_rows(lapply(dates,FUN=readsource,datasource=datasource,in_vars=in_vars))
 
   # Convert variable names to lower case
 

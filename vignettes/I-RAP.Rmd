@@ -1,0 +1,58 @@
+---
+title: "I-RAP"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{I-RAP}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(iRAP)
+```
+
+# Introduction
+
+# Data sources
+
+I-RAP draws raw data from a specified data source. At present, data sources are stored in a variety of places not following a set structure. As a result, data sources must be manually defined. 
+
+## Setting up a data source
+
+Data sources are specified across a range of scripts within the package. 
+
+### setsource.R
+
+This is where the source is originally defined. Each data source has three elements which are defined in this file:
+
+1. *s3path:* This is the path to the file stored in an s3 bucket. It is likely that this path will contain a variable which differentiates between different extracts of the same data. For example, a date which forms part of the filename and identifies the period to which the data refer.
+
+2. *format:* This identifies the format of the data file so that the package knows how to import it. Only the format name needs to be defined here. Details of how to deal with different file formats are in *readsource.R*.
+
+3. *extra_processing:* Some data sources require bespoke processing steps that are not currently available as part of the main I-RAP process. If so, this is specified here. The extra processing steps are specified by a string which is the name of a function defined in the file *extra_source_processing.R*. If a data source does not require any bespoke processing, this value should be set to _NA_.
+
+Every time a new data source is added to I-RAP it will need to be defined in this file by specifying these three values.
+
+### readsource.R
+
+This specifies how to read in data in a particular format. It only needs to be edited if you have added a new data source in *setsource.R* which uses a new *format* value.
+
+### extra_source_processing.R
+
+This contains bespoke functions which need to be run on certain data sources and are not contained in the main I-RAP function *iRAP_build_data()*.
+
+It is expected that these functions will be temporary and added to *iRAP_build_data()* at a later date.
+
+### addtime.R
+
+This specifies how each data source should add time period variables to the dataset. It should be edited every time a new data source is created.
+
+
+
