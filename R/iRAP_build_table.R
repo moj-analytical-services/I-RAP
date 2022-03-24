@@ -182,7 +182,7 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   table <- dplyr::select(table,-countvar,countvar)
   
   table <- table %>% dplyr::rename_with(.cols = "countvar",
-                                        .fn = ~ indicator)
+                                        .fn = ~ count_indicator)
   
   return(table)
   

@@ -4,7 +4,7 @@ make_indicators <- function(data,count_indicator,mean_indicator,mean_indicator_v
     
             data %>% 
               dplyr::group_by(dplyr::across(everything())) %>%
-              dplyr::summarise(countvar = n()) %>%
+              dplyr::summarise(countvar = dplyr::n()) %>%
               dplyr::rename_with(.cols = "countvar",
                        .fn = ~ count_indicator)
       
@@ -12,7 +12,7 @@ make_indicators <- function(data,count_indicator,mean_indicator,mean_indicator_v
             
             data %>% 
               dplyr::group_by(dplyr::across(-!!sym(mean_indicator_var))) %>%
-              dplyr::summarise(countvar = n(),
+              dplyr::summarise(countvar = dplyr::n(),
                                meanvar = mean(as.numeric(!!sym(mean_indicator_var)),na.rm=TRUE)) %>%
               dplyr::rename_with(.cols = all_of(c("countvar","meanvar")),
                        .fn = ~ c(count_indicator,mean_indicator))
