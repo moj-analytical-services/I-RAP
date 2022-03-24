@@ -11,7 +11,8 @@
 #' @export
 #' @importFrom magrittr "%>%"
 
-iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,nototalvars = NULL,indicator) {
+iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,nototalvars = NULL,
+                             count_indicator,mean_indicator=NULL) {
   
   # Define variables that will be constant for every row of table
   
@@ -84,7 +85,7 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   
   tabulate <- function(x){tabledata %>%
       dplyr::group_by(dplyr::across(x), .drop=FALSE) %>%
-      dplyr::summarise(countvar = sum(.data[[indicator]]))}
+      dplyr::summarise(countvar = sum(.data[[count_indicator]]))}
   
   suppressMessages(
   
@@ -181,7 +182,7 @@ iRAP_build_table <- function(tabledata,filtervars = NULL,nestedvars = NULL,notot
   table <- dplyr::select(table,-countvar,countvar)
   
   table <- table %>% dplyr::rename_with(.cols = "countvar",
-                                        .fn = ~ indicator)
+                                        .fn = ~ count_indicator)
   
   return(table)
   

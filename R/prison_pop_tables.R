@@ -21,23 +21,23 @@ prison_pop_tables <- function(dates, SHA="main") {
   
   all_tables <- list(
   
-  Table1_1 = iRAP_build_table(popdata,c("sex","age_group_adult"),custodyvars,indicator = "prisoners"),
+  Table1_1 = iRAP_build_table(popdata,c("sex","age_group_adult"),custodyvars,count_indicator = "prisoners"),
   
   Table1_2 = iRAP_build_table(dplyr::filter(popdata,custody_type %in% c("Untried","Convicted unsentenced") | (custody_group == "Sentenced" & custody_type !="Fine defaulter")),
                               c("sex","age_group_adult","offence_group"),
                               list(c("custody_group","custody_type")),
-                              indicator="prisoners") %>%
+                              count_indicator = "prisoners") %>%
               dplyr::filter(custody_group != "Sentenced" | (custody_group == "Sentenced" & custody_type =="Total")),
   
-  Table1_3 = iRAP_build_table(popdata,c("sex","age_group","custody_group"),indicator="prisoners"),
+  Table1_3 = iRAP_build_table(popdata,c("sex","age_group","custody_group"),count_indicator = "prisoners"),
   
-  Table1_4 = iRAP_build_table(popdata,c("ethnicity_group","sex"),indicator="prisoners"),
+  Table1_4 = iRAP_build_table(popdata,c("ethnicity_group","sex"),count_indicator = "prisoners"),
   
-  Table1_6 = iRAP_build_table(popdata,"nationality_group",custodyvars,indicator="prisoners"),
+  Table1_6 = iRAP_build_table(popdata,"nationality_group",custodyvars,count_indicator = "prisoners"),
   
-  Table1_7 = iRAP_build_table(latestdata,"sex",list(c("nationality_group","nationality_continent","nationality")),indicator = "prisoners"),
+  Table1_7 = iRAP_build_table(latestdata,"sex",list(c("nationality_group","nationality_continent","nationality")),count_indicator = "prisoners"),
   
-  Table1_8 = iRAP_build_table(latestdata,"nationality_group",list(c("prison_type","prison_name")),indicator = "prisoners")
+  Table1_8 = iRAP_build_table(latestdata,"nationality_group",list(c("prison_type","prison_name")),count_indicator = "prisoners")
   
   )
   

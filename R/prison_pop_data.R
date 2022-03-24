@@ -18,7 +18,7 @@ prison_pop_data <- function(dates, SHA="main") {
                                                         new_name = c("sex_code","custody_code","ethnicity_code","nationality_code","prison_code","offence_code")),
                              lookups = c("sex","custody","ethnicity","nationality","prison","offence"),
                              age_lookups = "all",
-                             indicator = "prisoners",
+                             count_indicator = "prisoners",
                              SHA = SHA)
   
   return(popdata)
