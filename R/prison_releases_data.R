@@ -12,7 +12,7 @@ prison_releases_data <- function(dates, SHA="main") {
 
   releasedata <- iRAP_build_data(datasource = "prison_releases",
                                  dates = dates,
-                                 in_vars = c("Sex","Discharge_Age","Prior_JISLlen_Band","Avesen"),
+                                 in_vars = c("Sex","Discharge_Age","Prior_JISLlen_Band","Avesen","Time_Inc_Days"),
                                  renames = dplyr::bind_cols(old_name=c("sex", "prior_jisllen_band", "discharge_age"),
                                                             new_name=c("sex_code","custody_code","age")),
                                  lookups = c("sex","custody_releases"),

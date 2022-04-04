@@ -18,7 +18,7 @@
 
 iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,replace=NULL,lookups=NULL,custom_lookups=NULL,
                             age_lookups=NULL,join_vars=NULL,count_indicator,mean_indicator=NULL,mean_indicator_var=NULL,SHA="main") {
-  
+
   # Loop through all dates combining all raw datasets
   
   all_data <- dplyr::bind_rows(lapply(dates,FUN=readsource,datasource=datasource,in_vars=in_vars))
