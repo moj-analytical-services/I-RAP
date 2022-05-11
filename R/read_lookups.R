@@ -8,7 +8,7 @@ read_lookups <- function(SHA="main") {
   
   filelist <- filelist[stringr::str_detect(filelist,"reference_files/[a-z_]+.csv")]
   
-  lookups <- lapply(filelist,FUN=function(x){read.csv(paste0("https://raw.github.com/moj-analytical-services/harmonisation-reference/",SHA,"/",x),na.strings = "")})
+  lookups <- lapply(filelist,FUN=function(x){read.csv(paste0("https://raw.github.com/moj-analytical-services/harmonisation-reference/",SHA,"/",x))})
   
   lookups <- lapply(lookups,FUN=function(x){dplyr::mutate(x,dplyr::across(dplyr::everything(), as.character))})
 
