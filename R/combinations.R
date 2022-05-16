@@ -42,3 +42,16 @@ combinations <- function(vars,metadata){
   
   return(valid_combinations)
 }
+
+## Summarise indicator variable by a combination list
+
+summarise_by_combination <- function(combination,indicator,root_var,parent_var) {  
+  
+  df %>% 
+    {if(parent != "") dplyr::filter(.,!!sym(root_var) != !!sym(parent_var)) else .} %>%
+    dplyr::group_by(dplyr::across(all_of(combination)), .drop=TRUE) %>%
+    dplyr::summarise("{indicator}" := sum(.data[[indicator]])) %>%
+    dplyr::ungroup()
+  
+}
+
