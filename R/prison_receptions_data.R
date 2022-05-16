@@ -29,7 +29,7 @@ prison_receptions_data <- function(dates, SHA="main") {
                                age_lookups = "all",
                                join_vars = list(c("untried_flag","convicted_flag","civil_flag"),
                                                 NULL,NULL,NULL,NULL,NULL,NULL),
-                               indicator = "receptions",
+                               count_indicator = "receptions",
                                SHA = SHA)
   
   return(recepdata)
