@@ -43,33 +43,33 @@ list_combinations <- function(vars,metadata){
   return(valid_combinations)
 }
 
-filterforcombo <- function(data,root_var,parent_var) {
+## Filter a dataset so that it does not contain any cases where the root and parent variable values are the same
+## This is necessary for generating summary statistics containing a variable with a heirarchy
+
+filter_for_summary <- function(data,root_var,parent_var) {
   
   for (i in 1:length(root_var)) {
     
     if (i==1) {
-      
       df <- data
     }
-    
+
     df <- dplyr::filter(df,!!sym(root_var[i]) != !!sym(parent_var[i]))
-    
   }
   
   return(df)
-  
 }
 
+## Generate summary statistics for data according to a specified list of variables to summarise by
 
+summarise_by_combination <- function(root_var,parent_var,combination,data,indicator) { 
+  
+    data %>%
+      {if(length(root_var) > 0) filter_for_summary(.,root_var,parent_var) else .} %>%
+            dplyr::group_by(dplyr::across(all_of(combination)), .drop=TRUE) %>%
+            dplyr::summarise("{indicator}" := sum(.data[[indicator]])) %>%
+            dplyr::ungroup()
 
-summarise_by_combination <- function(data,root_var,parent_var,combination,indicator) {  
-  
-  data %>% 
-    {if(length(root_var) > 0) filterforcombo(.,root_var,parent_var) else .}  %>%
-    dplyr::group_by(dplyr::across(all_of(combination)), .drop=TRUE) %>%
-    dplyr::summarise("{indicator}" := sum(.data[[indicator]])) %>%
-    dplyr::ungroup()
-  
 }
 
 ## Find variables from vector that are lowest in a heirarchy
@@ -82,6 +82,8 @@ find_root_var <- function(vars,metadata){
   return(vars[sapply(vars,function(x){x %in% meta_parent$variable && !x %in% meta_parent$parent})])
   
 }
+
+## Find the parent variable to a specified variable
 
 find_parent <- function(var,metadata) {
   

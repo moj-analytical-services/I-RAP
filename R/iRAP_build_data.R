@@ -71,6 +71,10 @@ iRAP_build_data <- function(datasource,dates,in_vars=NULL,renames=NULL,replace=N
   
   }
   
+  # Remove any factors
+  
+  all_data <- data.frame(lapply(all_data,as.character), stringsAsFactors=FALSE)
+  
   # Aggregate data by all retained variables to compress data frame
 
   finaldata <- all_data %>%
