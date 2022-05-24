@@ -54,7 +54,7 @@ filter_for_summary <- function(data,root_var,parent_var) {
       df <- data
     }
 
-    df <- dplyr::filter(df,!!sym(root_var[i]) != !!sym(parent_var[i]))
+    df <- dplyr::filter(df,!!rlang::sym(root_var[i]) != !!rlang::sym(parent_var[i]))
   }
   
   return(df)
@@ -76,8 +76,8 @@ summarise_by_combination <- function(root_var,parent_var,combination,data,indica
 
 find_root_var <- function(vars,metadata){
   
-  meta_parent <- filter(metadata,parent != "" | parent %in% vars) %>%
-    filter(variable %in% vars)
+  meta_parent <- dplyr::filter(metadata,parent != "" | parent %in% vars) %>%
+    dplyr::filter(variable %in% vars)
   
   return(vars[sapply(vars,function(x){x %in% meta_parent$variable && !x %in% meta_parent$parent})])
   

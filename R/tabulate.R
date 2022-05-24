@@ -15,8 +15,9 @@ tabulate <- function(data,vars,metadata,indicator) {
   
   combinations <- list_combinations(vars,metadata)
   
-  geovars <- c("country_code",
-             "country_name")
+  geovars <- c("geographic_level",
+              "country_code",
+              "country_name")
 
   timevars <- c("time_period",
               "time_identifier")
@@ -30,8 +31,8 @@ tabulate <- function(data,vars,metadata,indicator) {
   parent_var <- lapply(root_var,function(var){sapply(var,find_parent,metadata=metadata)})
   
   table <- purrr::pmap(list(root_var,parent_var,combinations),summarise_by_combination,data=data,indicator=indicator) %>%
-    bind_rows
-  
+            dplyr::bind_rows()
+   
   table[is.na(table)] <- "Total"
   
   return(table)
