@@ -38,8 +38,10 @@ Renders an iRAP format data frame into an aggregated data table in a format suit
   -  [prison_pop_tables](#prison_pop_tables)
   -  [prison_receptions_data](#prison_receptions_data)
   -  [prison_receptions_tables](#prison_receptions_tables)
+  -  [prison_releases_data](#prison_releases_data)
+  -  [prison_releases_tables](#prison_releases_tables)
   
-Source-specific functions are specific forms of the core functions in which the arguments have been pre-set to values needed to process a particular data source.
+Source-specific functions are specific forms of the core functions in which the arguments have been pre-set to values needed to process a particular data source, or generate a pre-defined set of tables.
 
 Each function includes two arguments:
   - **dates**: A vector of dates corresponding to the time period of data required
@@ -81,6 +83,23 @@ This function runs prison_receptions_data. It does not need to be run separately
 prison_receptions_tables(dates=c("2020q1","20200q2","2020q3","2020q4"), SHA="main")
 ```
 
+### prison_releases_data
+
+```r
+prison_releases_data(dates=c("2020q1","20200q2","2020q3","2020q4"), SHA="main")
+```
+
+A specific form of iRAP_build_data with preset parameters for processing the prison releases dataset used in OMSQ. It outputs an iRAP format dataset.
+
+### prison_releases_tables
+
+A specific form of iRAP_build_tables with preset parameters for processing the prison releases dataset used in OMSQ. It outputs a list of data frames, each of which can be exported as a CSV and uploaded to EES.
+
+This function runs prison_releases_data. It does not need to be run separately. 
+
+```r
+prison_releases_tables(dates=c("2020q1","20200q2","2020q3","2020q4"), SHA="main")
+```
 
 
 
