@@ -9,6 +9,7 @@ The iRAP (integrated RAP) package aims to provide a single package that allows m
 Currently, iRAP works with the following data sources:
   - Prison population (partial)
   - Prison receptions (partial)
+  - Prison releases (partial)
 
 ### Installation
 
