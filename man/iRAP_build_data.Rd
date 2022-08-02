@@ -14,7 +14,9 @@ iRAP_build_data(
   custom_lookups = NULL,
   age_lookups = NULL,
   join_vars = NULL,
-  indicator,
+  count_indicator,
+  mean_indicator = NULL,
+  mean_indicator_var = NULL,
   SHA = "main"
 )
 }
@@ -31,9 +33,9 @@ iRAP_build_data(
 
 \item{join_vars}{a character vector of variable names that you want to use to join to the lookup tables}
 
-\item{indicator}{a string showing the name you want to give to the final count variable}
-
 \item{agespecs}{a list containing data frame(s) each of which specifies age bands to use}
+
+\item{indicator}{a string showing the name you want to give to the final count variable}
 }
 \value{
 A data frame in iRAP format

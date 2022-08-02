@@ -21,7 +21,8 @@ Imports:
         httr,
         tibble,
         tidyselect,
-        rlang
+        rlang,
+        botor
 RoxygenNote: 7.1.2
 Suggests: 
     rmarkdown,

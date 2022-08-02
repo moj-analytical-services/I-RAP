@@ -9,7 +9,8 @@ iRAP_build_table(
   filtervars = NULL,
   nestedvars = NULL,
   nototalvars = NULL,
-  indicator
+  count_indicator,
+  mean_indicator = NULL
 )
 }
 \arguments{
